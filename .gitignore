@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+
+# Code::Blocks specific files
+.cbp
+.depend
+*.layout
+*.depend
+
+# Code::Blocks project shared settings
+*.cbp.shared
+
+# Code::Blocks generated debug and release directories
+debug/
+release/
