@@ -16,8 +16,24 @@ struct CartonEstructura {
 
 Carton crearCarton(int fechaEmi, int fechaJuego, char direccion[20], Persona persona) {
     Carton c = new CartonEstructura;
+    int modo = 0;
+    std::cout << "Como deseas jugar?" <<std::endl;
+    std::cout << "1 - Modo automatico" <<std::endl;
+    std::cout << "2 - Modo manual (Eligiendo los numeros)" <<std::endl;
+    std::cout << "Escribe un numero: ";
+    std::cin >> modo;
 
-    generarCarton(c);
+    switch(modo){
+        case 1:
+            generarCarton(c);
+            break;
+        case 2:
+            generarCartonUser(c);
+            break;
+        default:
+            std:: cout << "Opcion no valida" << std::endl;
+            break;
+    }
 
     c->fechaEmi = fechaEmi;
     c->fechaJuego = fechaJuego;
@@ -54,25 +70,44 @@ void generarCarton(Carton c) {
     }
 }
 
+void generarCartonUser(Carton c){
+
+    for(int i = 0; i < 8; i++){
+        std::cout << "Ingrese el numero "<<i<<": ";
+        std::cin >> c->numeros[i];
+    }
+
+    for(int i = 0; i <7; i++){
+        for(int j = i+1 ; j < 8; j++){
+            if(c->numeros[i] > c->numeros[j]){
+                int temp = c->numeros[i];
+                c->numeros[i] = c->numeros[j];
+                c->numeros[j] = temp;
+            }
+        }
+    }
+
+}
+
 void jugada(Carton c){
 
-    int numerosGenerados[20];
     int coincidencias = 0;
 
     //Genero los 20 numeros
     for(int i=0; i < 20 ; i++){
         int numero = rand()%100;
-        numerosGenerados[i] = numero;
         c->numerosGenerados[i] = numero;
     }
 
     //Voy a contar las coincidencias
     for(int i = 0; i < 20 ; i++){
         for(int j = 0; j < 8; j++){
-            if(c->numeros[j] == numerosGenerados[i]){
+            if(c->numeros[j] == c->numerosGenerados[i]){
+                c->numerosAcertados[j] = c->numerosGenerados[j];
                 coincidencias++;
-                c->numerosAcertados[j] = c->numerosGenerados[i];
                 break;
+            }else{
+                c->numerosAcertados[j] = 0;
             }
         }
     }
@@ -81,10 +116,24 @@ void jugada(Carton c){
 }
 
 void mostrarCarton(const Carton c) {
-    std::cout << "========== Carton ==========" << std::endl;
+    system("cls");
+    std::cout << "========== Carton INFO ==========" << std::endl;
     std::cout << "La direccion del carton es: " << c->direccion << std::endl;
     std::cout << "Fecha de emision: " << c->fechaEmi << std::endl;
     std::cout << "Fecha de juego: " << c->fechaJuego << std::endl;
+
+    std::cout<< "Han salido los siguientes numeros en el carton: " <<std::endl;
+    for(int i = 0; i < 20; i++){
+        std::cout<<" "<<c->numerosGenerados[i];
+    }
+    std::cout <<" "<< std::endl;
+
+    mostrarPersona(c->persona);
+
+    std::cout <<" "<< std::endl;
+
+
+    std::cout << "========== Jugada INFO ==========" << std::endl;
 
     std::cout << "Numeros seleccionados: " << std::endl;
     for (int i = 0; i < 8; ++i) {
@@ -93,17 +142,15 @@ void mostrarCarton(const Carton c) {
 
     std::cout <<""<< std::endl;
 
-    std::cout<< "Han salido los siguientes numeros en el carton: " <<std::endl;
-    for(int i = 0; i < 20; i++){
-        std::cout<<" "<<c->numerosGenerados[i];
-    }
-    std::cout <<""<< std::endl;
 
-    std::cout<< "Haz acertado el/los numeros: " <<std::endl;
-    for(int i=0; i <8; i++){
-        if(c->numerosAcertados[i] > 0){
-            std::cout << " " << c->numerosAcertados[i];
+    if(c->coincidencias >= 1){
+        std::cout<< "Numeros que has acertado: " <<std::endl;
+        for(int i = 0; i < 8; i++){
+            if(c->numerosAcertados[i] > 0){
+                std::cout << " " << c->numerosAcertados[i];
+            }
         }
+        std::cout << std::endl;
     }
 
     int aciertos = c->coincidencias;
@@ -122,7 +169,7 @@ void mostrarCarton(const Carton c) {
             std::cout << "Ganaste $11.000.0000, ya que acertaste: " <<c->coincidencias <<" numeros!" << std::endl;
             break;
         default:
-            std::cout << "No ganaste nada, suerte la proxima. Haz acertado: " << c->coincidencias << std::endl;
+            std::cout << "No ganaste nada, suerte la proxima."<< std::endl;
             break;
     }
 }
