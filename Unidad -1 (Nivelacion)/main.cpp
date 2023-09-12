@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <time.h>
 #include <windows.h>
 #include "persona.h"
 #include "carton.h"
